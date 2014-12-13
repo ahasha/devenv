@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#Get full path of repository
+SCRIPT_HOME="$( cd "$( dirname "$0" )" && pwd )"
+
+case "$1" in 
+    ssh)
+        vagrant ssh
+        ;;
+    up)     
+        vagrant up
+        ;;
+esac    
