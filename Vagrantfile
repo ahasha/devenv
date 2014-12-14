@@ -13,5 +13,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.synced_folder APPS_PATH, "/apps"
 
     #ipython notebook server
-    config.vm.network :forwarded_port, :host => 8888, :guest => 8888
+    config.vm.network :forwarded_port, :host => 49001, :guest => 8888
+
+    #Build and run ipython notebook server container.
+    run_args = "-p 8888:8888 " \
+        "-v /apps/notebook/data:/data " \
+        "-v /apps/notebook/logs:/logs " \
+        "-v /apps/notebook/notebooks:/notebooks " \
+        "-e \"PASSWORD=passwd\" " \
+        "--name notebook "
+
+    config.vm.provision :docker do |d|
+        d.pull_images "ipython/scipyserver"
+        d.run "ipython/scipyserver", args: run_args
+    end
 end
