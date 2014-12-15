@@ -3,11 +3,32 @@
 #Get full path of repository
 SCRIPT_HOME="$( cd "$( dirname "$0" )" && pwd )"
 
+create_directory_dependencies() {
+    mkdir -p ~/.ivy
+    mkdir -p ~/.sbt
+}
+
 case "$1" in 
     ssh)
         vagrant ssh
         ;;
     up)     
+        create_directory_dependencies
         vagrant up
+        ;;
+    scala)
+        scala_args="-v /apps/scala/src:/src "
+        scala_args+="-v /home/vagrant/.sbt:/root/.sbt "
+        scala_args+="-v /home/vagrant/.ivy:/root/.ivy "
+        scala_args+="--name scala "
+        vagrant ssh -c "docker rm scala; docker run -it $scala_args scala"
+        ;;
+    refresh)
+        create_directory_dependencies
+        vagrant reload --provision
+        ;;
+    *)
+        echo $"Usage: $0 {ssh|up|scala|refresh}"
+        RETVAL=1
         ;;
 esac    
